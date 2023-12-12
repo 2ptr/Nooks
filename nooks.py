@@ -691,6 +691,9 @@ def sysInfo():
     print("\t==> Kernel and OS")
     sysline("uname -o && uname -v", 1)
     
+    print("\t==> Users")
+    sysline("ls /home/",1)
+    
     print("\t==> Listening Ports")
     sysline("netstat -aln | grep -e 0.0.0.0 -e 127.0 -e Address | cut -f 2", 1)
     detectServices()
