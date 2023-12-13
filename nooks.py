@@ -23574,8 +23574,12 @@ def searchUnique():
     sysFiles = []
     
     for name in dirnames:
-        find = str(os.popen('find /'+name+'/ -maxdepth 2 2>/dev/null').read())
-        find = find.split("\n")
+        if name == "home":
+            find = str(os.popen('find /'+name+'/ -maxdepth 1 2>/dev/null').read())
+            find = find.split("\n")
+        else:
+            find = str(os.popen('find /'+name+'/ -maxdepth 2 2>/dev/null').read())
+            find = find.split("\n")
         sysFiles = sysFiles + find
         
     for line in sysFiles:
