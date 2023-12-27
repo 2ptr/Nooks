@@ -23558,18 +23558,18 @@ def sysInfo():
     print("\t==> CPU Information")
     sysline("lscpu | head -n 4",1)
     
-    print("\t==> Kernel and OS")
+    print("\t==> OS and Kernel Details")
     sysline("uname -o && uname -v", 1)
     
-    print("\t==> Users")
+    print("\t==> Homed Users")
     sysline("ls /home/",1)
     
     print("\t==> Listening Ports")
     sysline("netstat -aln | grep -e 0.0.0.0 -e 127.0 -e Address | cut -f 2", 1)
     detectServices()
     
-def searchUnique():
-    print("\n[*] Finding interesting files and directories... [*]\n")
+def findDirs():
+    print("\n[*] Finding interesting directories... [*]\n")
     dirnames = ["var","home","mnt","tmp","media"]
     sysFiles = []
     
@@ -23600,28 +23600,49 @@ def getTools():
         print("\tUsage: python nooks.py [IP] [Port]")
         print("\n"+"*"*80)
         return
-    
 
-print(startscreen)
+def fileSearch():
+    print("[*] Finding config files... [*]")
+    sysline('for l in $(echo ".conf .config .cnf");do echo "\nFile extension: " $l; find / -name *$l 2>/dev/null | grep -v "lib\|fonts\|share\|core" ;done;',1)
 
-if(len(sys.argv) == 3):
-    sysInfo()
-    searchUnique()
-    getTools()
-    exit()
-    
-if(len(sys.argv) == 1):
-    sysInfo()
-    searchUnique()
-    exit()
-    
-elif(len(sys.argv) > 1):
-    if "-h" in sys.argv or "--help" in sys.argv:
-        print("\n"+"*"*80)
-        print("\tUsage: python nooks.py ([IP] [Port])")
-        print("\n"+"*"*80)
-    else:
-        print("\n"+"*"*80)
-        print("\tArgument error.")
-        print("\tFor more help use nooks.py -h or nooks.py --help")
-        print("*"*80)
+    print("\n[*] Finding database files... [*]")
+    sysline('for l in $(echo ".sql .db .*db .db*");do echo "\nDB File extension: " $l; find / -name *$l 2>/dev/null | grep -v "doc\|lib\|headers\|share\|man";done;',1)
+
+    print("\n[*] Finding scripts... [*]")
+    sysline('for l in $(echo ".py .pyc .pl .go .jar .c .sh");do echo "\nFile extension: " $l; find / -name *$l 2>/dev/null | grep -v "doc\|lib\|headers\|share";done;',1)
+
+    print("\n[*] Finding SSH keys... [*]")
+    sysline('grep -rnw "PRIVATE KEY" /home/* 2>/dev/null | grep ":1";',1)
+    sysline('grep -rnw "ssh-rsa" /home/* 2>/dev/null | grep ":1";',1)
+
+    print("\n[*] USER HISTORY [*]")
+    sysline('tail -n5 /home/*/.bash* 2>/dev/null;',1)
+
+    return
+
+def run():
+    print(startscreen)
+    if(len(sys.argv) == 3):
+        sysInfo()
+        findDirs()
+        getTools()
+        exit()
+        
+    if(len(sys.argv) == 1):
+        sysInfo()
+        findDirs()
+        fileSearch()
+        exit()
+        
+    elif(len(sys.argv) > 1):
+        if "-h" in sys.argv or "--help" in sys.argv:
+            print("\n"+"*"*80)
+            print("\tUsage: python nooks.py ([IP] [Port])")
+            print("\n"+"*"*80)
+        else:
+            print("\n"+"*"*80)
+            print("\tArgument error.")
+            print("\tFor more help use nooks.py -h or nooks.py --help")
+            print("*"*80)
+
+run()
